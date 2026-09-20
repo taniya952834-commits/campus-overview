@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dream Campus - Student & Visitor Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        :root { --primary: #003366; --secondary: #008080; --accent: #ff6f61; --light-bg: #f8f9fa; --dark-text: #2c3e50; }
+        body { color: var(--dark-text); line-height: 1.6; background-color: #fff; }
+        header { background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        nav { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: auto; padding: 1rem 2rem; }
+        .logo { font-size: 1.6rem; font-weight: bold; color: var(--primary); cursor: pointer; }
+        .nav-links { display: flex; list-style: none; gap: 1.2rem; }
+        .nav-links a { text-decoration: none; color: var(--dark-text); font-weight: 500; cursor: pointer; transition: color 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--secondary); font-weight: bold; }
+        .btn { background-color: var(--accent); color: white; padding: 0.5rem 1rem; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+        .btn-outline { background-color: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .page-content { display: none; padding: 3rem 2rem; max-width: 1200px; margin: auto; min-height: 60vh; }
+        .page-content.active { display: block; }
+        .hero { background: linear-gradient(rgba(0, 51, 102, 0.75), rgba(0, 51, 102, 0.75)), url('https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1350&q=80') center/cover no-repeat; color: white; padding: 5rem 2rem; text-align: center; border-radius: 8px; margin-bottom: 2rem; }
+        .stats { background-color: var(--light-bg); padding: 2.5rem 2rem; display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1.5rem; text-align: center; border-radius: 8px; }
+        .stat-item h2 { font-size: 2.2rem; color: var(--primary); }
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+        .card { border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.5rem; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .card h3 { color: var(--primary); margin-bottom: 0.5rem; }
+        .form-container { background: var(--light-bg); padding: 2rem; border-radius: 8px; margin-top: 1.5rem; max-width: 600px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; margin-bottom: 0.4rem; font-weight: 600; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 0.8rem; text-align: left; }
+        th { background-color: var(--primary); color: white; }
+        .status-badge { background-color: #e6f4ea; color: #137333; padding: 0.2rem 0.6rem; border-radius: 12px; font-weight: 600; font-size: 0.85rem; }
+        .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-backdrop.active { display: flex; }
+        .modal { background: white; padding: 2rem; border-radius: 8px; width: 100%; max-width: 400px; position: relative; }
+        .close-btn { position: absolute; top: 1rem; right: 1.2rem; font-size: 1.4rem; cursor: pointer; }
+        footer { background-color: var(--primary); color: white; text-align: center; padding: 1.5rem; margin-top: 3rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav>
+            <div class="logo" onclick="switchPage('home')">Dream Campus</div>
+            <ul class="nav-links">
+                <li><a onclick="switchPage('home')" id="nav-home" class="active">Home</a></li>
+                <li><a onclick="switchPage('about')" id="nav-about">About Us</a></li>
+                <li><a onclick="switchPage('courses')" id="nav-courses">Courses</a></li>
+                <!-- VIRTUAL VISIT AUTO-LOADS VISITOR DATA -->
+                <li><a onclick="onVirtualVisitClick()" id="nav-virtual-visit">Virtual Visit</a></li>
+                <li><a onclick="switchPage('reviews')" id="nav-reviews">Reviews</a></li>
+                <li><a onclick="switchPage('admissions')" id="nav-admissions">Admissions</a></li>
+            </ul>
+            <div>
+                <button class="btn btn-outline" id="user-btn" onclick="openUserModal()">User Login</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- 1. HOME PAGE -->
+    <div id="page-home" class="page-content active">
+        <section class="hero">
+            <h1>Welcome to Dream Campus</h1>
+            <p>Where Big Dreams Take Flight. A world-class education paired with a safe, vibrant community.</p>
+        </section>
+        <section class="stats">
+            <div class="stat-item"><h2>96%</h2><p>Placement Rate</p></div>
+            <div class="stat-item"><h2>100+</h2><p>Clubs & Sports</p></div>
+            <div class="stat-item"><h2>24/7</h2><p>Campus Security</p></div>
+            <div class="stat-item"><h2>$5M+</h2><p>Scholarships</p></div>
+        </section>
+    </div>
+
+    <!-- 2. ABOUT PAGE -->
+    <div id="page-about" class="page-content">
+        <h2>About Dream Campus</h2>
+        <p style="margin-top: 1rem;">Founded with the mission to foster global leaders, Dream Campus offers state-of-the-art facilities, modern curriculum, and a nurturing environment for both students and parents.</p>
+    </div>
+
+    <!-- 3. COURSES PAGE -->
+    <div id="page-courses" class="page-content">
+        <h2>Our Academic Programs</h2>
+        <div class="grid-cards">
+            <div class="card"><h3>School of Engineering</h3><p>Computer Science, AI & ML, Robotics, and Civil Engineering.</p></div>
+            <div class="card"><h3>School of Business</h3><p>Global Management, Finance, Marketing, and Entrepreneurship.</p></div>
+            <div class="card"><h3>School of Arts & Humanities</h3><p>Digital Media, Journalism, Literature, and Behavioral Sciences.</p></div>
+        </div>
+    </div>
+
+    <!-- 4. VIRTUAL VISIT & VISITOR DATA PAGE -->
+    <div id="page-virtual-visit" class="page-content">
+        <h2>Virtual Visit & Live Visitor Data</h2>
+        <p style="margin-top: 0.5rem; color: #555;">Clicking <strong>Virtual Visit</strong> automatically fetches and displays all registered visitor details below.</p>
+
+        <!-- BOOK TOUR FORM -->
+        <div class="form-container">
+            <h3>Schedule a Virtual Tour</h3>
+            <form onsubmit="submitVisitRequest(event)">
+                <div class="form-group"><label>Full Name</label><input type="text" id="visit-name" required></div>
+                <div class="form-group"><label>Email Address</label><input type="email" id="visit-email" required></div>
+                <div class="form-group"><label>Role</label>
+                    <select id="visit-role">
+                        <option value="Student">Student</option>
+                        <option value="Parent">Parent</option>
+                        <option value="Guest">Guest</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Preferred Visit Date</label><input type="date" id="visit-date" required></div>
+                <button type="submit" class="btn">Register Visit</button>
+            </form>
+        </div>
+
+        <!-- VISITOR DATA TABLE -->
+        <h3 style="margin-top: 2.5rem; color: var(--primary);">Fetched Visitor Log</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Visitor Name</th>
+                    <th>Email</th>
+                    <th>Category</th>
+                    <th>Visit Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="visitor-table-body"></tbody>
+        </table>
+    </div>
+
+    <!-- 5. REVIEWS PAGE -->
+    <div id="page-reviews" class="page-content">
+        <h2>Student & Parent Reviews</h2>
+        <div class="form-container">
+            <h3>Leave a Review</h3>
+            <form onsubmit="submitReview(event)">
+                <div class="form-group"><label>Your Name</label><input type="text" id="reviewer-name" required></div>
+                <div class="form-group"><label>Review / Feedback</label><textarea id="review-comment" rows="3" required></textarea></div>
+                <button type="submit" class="btn">Submit Review</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. ADMISSIONS PAGE -->
+    <div id="page-admissions" class="page-content">
+        <h2>Admissions Overview</h2>
+        <p style="margin-top: 1rem;">Applications for academic session 2026-2027 are now open.</p>
+    </div>
+
+    <!-- 7. USER DASHBOARD -->
+    <div id="page-user-dashboard" class="page-content">
+        <h2>User Dashboard</h2>
+        <div class="card" style="margin-top: 1.5rem;">
+            <p><strong>Welcome:</strong> <span id="profile-name">-</span></p>
+            <p><strong>Email:</strong> <span id="profile-email">-</span></p>
+            <p><strong>Role:</strong> <span id="profile-role">-</span></p>
+        </div>
+    </div>
+
+    <!-- USER MODAL -->
+    <div class="modal-backdrop" id="user-modal">
+        <div class="modal">
+            <span class="close-btn" onclick="closeUserModal()">&times;</span>
+            <h3 style="color: var(--primary); margin-bottom: 1rem;">User Login</h3>
+            <form onsubmit="handleUserLogin(event)">
+                <div class="form-group"><label>Full Name</label><input type="text" id="user-fullname" required></div>
+                <div class="form-group"><label>Email</label><input type="email" id="user-email" required></div>
+                <div class="form-group"><label>Role</label><select id="user-type"><option value="Student">Student</option><option value="Parent">Parent</option></select></div>
+                <button type="submit" class="btn" style="width: 100%;">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <footer><p>&copy; 2026 Dream Campus. All Rights Reserved.</p></footer>
+
+    <script>
+        let currentUser = null;
+        let visitorDatabase = [
+            { id: 1, name: "Aarav Sharma", email: "aarav@gmail.com", role: "Student", date: "2026-10-15", status: "Scheduled" },
+            { id: 2, name: "Priya Mehta", email: "priya@gmail.com", role: "Parent", date: "2026-10-18", status: "Scheduled" }
+        ];
+
+        function switchPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+
+            document.getElementById('page-' + pageId).classList.add('active');
+            if(document.getElementById('nav-' + pageId)) document.getElementById('nav-' + pageId).classList.add('active');
+        }
+
+        // TRIGGERED WHEN 'VIRTUAL VISIT' LINK IS CLICKED
+        function onVirtualVisitClick() {
+            fetchVisitorData();
+            switchPage('virtual-visit');
+        }
+
+        function fetchVisitorData() {
+            const tbody = document.getElementById('visitor-table-body');
+            tbody.innerHTML = '';
+            visitorDatabase.forEach(v => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${v.id}</td><td>${v.name}</td><td>${v.email}</td><td>${v.role}</td><td>${v.date}</td><td><span class="status-badge">${v.status}</span></td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function submitVisitRequest(event) {
+            event.preventDefault();
+            const name = document.getElementById('visit-name').value;
+            const email = document.getElementById('visit-email').value;
+            const role = document.getElementById('visit-role').value;
+            const date = document.getElementById('visit-date').value;
+
+            visitorDatabase.push({ id: visitorDatabase.length + 1, name, email, role, date, status: "Scheduled" });
+            alert("Virtual Tour Registered!");
+            event.target.reset();
+            fetchVisitorData();
+        }
+
+        function submitReview(event) {
+            event.preventDefault();
+            alert("Review Submitted Successfully!");
+            event.target.reset();
+        }
+
+        function openUserModal() {
+            if(currentUser) {
+                // Logout Logic
+                currentUser = null;
+                document.getElementById('user-btn').innerText = 'User Login';
+                switchPage('home');
+            } else {
+                document.getElementById('user-modal').classList.add('active');
+            }
+        }
+        
+        function closeUserModal() {
+            document.getElementById('user-modal').classList.remove('active');
+        }
+
+        function handleUserLogin(event) {
+            event.preventDefault();
+            const name = document.getElementById('user-fullname').value;
+            currentUser = name;
+            document.getElementById('profile-name').innerText = name;
+            document.getElementById('profile-email').innerText = document.getElementById('user-email').value;
+            document.getElementById('profile-role').innerText = document.getElementById('user-type').value;
+            closeUserModal();
+            document.getElementById('user-btn').innerText = 'Logout (' + name + ')';
+            switchPage('user-dashboard');
+        }
+    </script>
+</body>
+</html>
